@@ -5,6 +5,7 @@
     {
         darwin-stable.url                   = "github:nixos/nixpkgs/nixpkgs-21.11-darwin";
         nixpkgs-stable.url                  = "github:nixos/nixpkgs/release-21.11";
+        nixpkgs-fork.url                    = "github:tricktron/nixpkgs/develop";
         darwin.url                          = "github:lnl7/nix-darwin/master";
         darwin.inputs.nixpkgs.follows       = "darwin-stable";
         home-manager.url                    = "github:nix-community/home-manager";
@@ -15,13 +16,13 @@
     { 
         self, 
         nixpkgs,
-        nixpkgs-stable,
         darwin,
-        home-manager, 
+        home-manager,
+        nixpkgs-fork,
         ...
     }:
     {
-        darwinConfigurations."gurten" = darwin.lib.darwinSystem
+        darwinConfigurations."gurten" = darwin.lib.darwinSystem rec
         {
             system = "aarch64-darwin";
             modules =
@@ -74,6 +75,12 @@
                             keep-outputs          = true
                             keep-derivations      = true
                         '';
+                        nixPath      =
+                        [
+                            "/nix/var/nix/profiles/per-user/root/channels"
+                            "\$HOME/.nix-defexpr/channels"
+                            { nixpkgs-fork = "\$HOME/github/my-forks/nixpkgs"; }
+                        ];
                     };
 
                     system.defaults               =
@@ -99,11 +106,16 @@
                     };
                     home-manager.useGlobalPkgs   = true;
                     home-manager.useUserPackages = true;
+                    home-manager.extraSpecialArgs =
+                    {
+                        pkgs-fork = nixpkgs-fork.legacyPackages.${system};
+                    };
                     home-manager.users.tricktron =
                     { 
                         config,
                         lib,
                         pkgs,
+                        pkgs-fork,
                         ...
                     }:
                     {
@@ -113,6 +125,9 @@
                             [
                                 oksh
                                 gnupg
+                            ] ++
+                            [
+                                pkgs-fork.libreoffice
                             ];
 
                             file.".profile".source                  = pkgs.writeText "profile"
@@ -133,7 +148,7 @@
                                 let apps = pkgs.buildEnv
                                 {
                                     name = "home-manager-apps";
-                                    paths = [ pkgs.alacritty ];
+                                    paths = with pkgs; [ alacritty vscode ] ++ [ pkgs-fork.libreoffice ];
                                     pathsToLink = "/Applications";
                                 };
                             in
@@ -190,7 +205,7 @@
                                 userName  = "Thibault Gagnaux";
                             };
 
-                            ssh =
+                            ssh       =
                             {
                                 enable         = true;
                                 hashKnownHosts = true;
@@ -201,6 +216,34 @@
                                     IdentityFile ~/.ssh/gurten
                                     AddKeysToAgent yes
                                 '';
+                            };
+
+                            java      =
+                            {
+                                enable  = true;
+                                package = pkgs.openjdk11;
+                            };
+
+                            vscode    =
+                            {
+                                enable       = true;
+                                extensions   = with pkgs.vscode-extensions;
+                                [
+                                    redhat.java
+                                    jnoortheen.nix-ide
+                                    asvetliakov.vscode-neovim
+                                ];
+                                userSettings =
+                                {
+                                    "editor.fontFamily"                          = "Jetbrains Mono, monospace";
+                                    "editor.fontLigatures"                       = true;
+                                    "terminal.integrated.fontFamily"             = "Jetbrains Mono";
+                                    "editor.fontSize"                            = 13;
+                                    "workbench.colorTheme"                       = "Dracula Pro (Van Helsing)";
+                                    "files.autoSave"                             = "afterDelay";
+                                    "vscode-neovim.neovimExecutablePaths.darwin" = 
+                                        "${config.home.profileDirectory}/bin/nvim";
+                                };
                             };
 
                             alacritty =
@@ -265,7 +308,7 @@
                                             family = "JetBrains Mono";
                                         };
 
-                                        size   = 12.0;
+                                        size   = 13.0;
                                     };
 
                                     colors =
@@ -288,33 +331,33 @@
                                         normal =
                                         {
                                             black   = "#514a63";
-                                            red     = "#ff453a";
-                                            green   = "#30d158";
+                                            red     = "#ff4040";
+                                            green   = "#73d988";
                                             yellow  = "#e5f224";
                                             blue    = "#008cff";
-                                            magenta = "#ff33cc";
+                                            magenta = "#e5599e";
                                             cyan    = "#0bcefd";
                                             white   = "#dcdbe0";
                                         };
                                         bright =
                                         {
                                             black   = "#746e82";
-                                            red     = "#FF6A61";
-                                            green   = "#59DA79";
+                                            red     = "#FF6666";
+                                            green   = "#8FE1A0";
                                             yellow  = "#EAF550";
                                             blue    = "#33A3FF";
-                                            magenta = "#FF5CD6";
+                                            magenta = "#EA7AB1";
                                             cyan    = "#3CD8FD";
                                             white   = "#ffffff";
                                         };
                                         dim =
                                         {
                                             black   = "#2f2544";
-                                            red     = "#CE3736";
-                                            green   = "#29A74E";
+                                            red     = "#CE333B";
+                                            green   = "#5EAE74";
                                             yellow  = "#BAC224";
                                             blue    = "#0270D3";
-                                            magenta = "#CE29AB";
+                                            magenta = "#BA4786";
                                             cyan    = "#0BA5D2";
                                             white   = "#bab6c1";
                                         };
