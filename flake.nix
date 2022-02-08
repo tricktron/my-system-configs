@@ -90,13 +90,22 @@
                         trackpad.Clicking = true;
                     };
 
-                    environment.etc."profile".text  = 
-                    ''
-                        # /etc/profile: DO NOT EDIT -- this file has been generated automatically.
+                    environment.etc              =
+                    {
+                        "profile".text  = 
+                        ''
+                            # /etc/profile: DO NOT EDIT -- this file has been generated automatically.
                             . ${config.system.build.setEnvironment}
-                        ${config.system.build.setAliases.text}
-                        ${config.environment.interactiveShellInit}
-                    '';
+                            ${config.system.build.setAliases.text}
+                            ${config.environment.interactiveShellInit}
+                        '';
+
+                        "containers/containers.conf.d/99-gvproxy-path.conf".text = 
+                        ''
+                            [engine]
+                            helper_binaries_dir = ["/etc/profiles/per-user/tricktron/bin"]
+                        '';
+                    };
 
                     users.nix.configureBuildUsers = true;
                     users.users.tricktron         =
@@ -108,7 +117,16 @@
                     home-manager.useUserPackages = true;
                     home-manager.extraSpecialArgs =
                     {
-                        pkgs-fork = nixpkgs-fork.legacyPackages.${system};
+                        pkgs-fork = import nixpkgs-fork
+                        {
+                            inherit (config.nixpkgs) config;
+                            inherit system;
+                        };
+                        unstable  = import nixpkgs
+                        {
+                            inherit (config.nixpkgs) config;
+                            inherit system;
+                        };
                     };
                     home-manager.users.tricktron =
                     { 
@@ -116,8 +134,16 @@
                         lib,
                         pkgs,
                         pkgs-fork,
+                        unstable,
                         ...
                     }:
+                    let packages-fork = with unstable;
+                    [
+                        libreoffice
+                        teams
+                        (pkgs-fork.podman.override { extraPackages = [ qemu ]; })
+                    ];
+                    in
                     {
                         home =
                         {
@@ -125,10 +151,12 @@
                             [
                                 oksh
                                 gnupg
-                            ] ++
-                            [
-                                pkgs-fork.libreoffice
-                            ];
+                                xz
+                                gvproxy
+                                qemu
+                                (maven.override { jdk = jdk8; })
+                            ]
+                            ++ packages-fork;
 
                             file.".profile".source                  = pkgs.writeText "profile"
                             ''
@@ -148,7 +176,7 @@
                                 let apps = pkgs.buildEnv
                                 {
                                     name = "home-manager-apps";
-                                    paths = with pkgs; [ alacritty vscode ] ++ [ pkgs-fork.libreoffice ];
+                                    paths = with pkgs; [ alacritty vscode ] ++ packages-fork;
                                     pathsToLink = "/Applications";
                                 };
                             in
@@ -232,13 +260,15 @@
                                     redhat.java
                                     jnoortheen.nix-ide
                                     asvetliakov.vscode-neovim
+                                    editorconfig.editorconfig
                                 ];
                                 userSettings =
                                 {
                                     "editor.fontFamily"                          = "Jetbrains Mono, monospace";
                                     "editor.fontLigatures"                       = true;
+                                    "editor.rulers"                              = [80 100];
                                     "terminal.integrated.fontFamily"             = "Jetbrains Mono";
-                                    "editor.fontSize"                            = 13;
+                                    "editor.fontSize"                            = 14;
                                     "workbench.colorTheme"                       = "Dracula Pro (Van Helsing)";
                                     "files.autoSave"                             = "afterDelay";
                                     "vscode-neovim.neovimExecutablePaths.darwin" = 
