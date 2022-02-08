@@ -262,6 +262,7 @@
                                     asvetliakov.vscode-neovim
                                     editorconfig.editorconfig
                                 ];
+
                                 userSettings =
                                 {
                                     "editor.fontFamily"                          = "Jetbrains Mono, monospace";
@@ -274,6 +275,50 @@
                                     "vscode-neovim.neovimExecutablePaths.darwin" = 
                                         "${config.home.profileDirectory}/bin/nvim";
                                 };
+                                
+                                keybindings  =
+                                [
+                                    {
+                                        "key"     = "ctrl+j";
+                                        "when"    = "editorTextFocus && !suggestWidgetVisible";
+                                        "command" = "workbench.action.terminal.toggleTerminal";
+                                    }
+                                    {
+                                        "key"     = "ctrl+j";
+                                        "when"    = "editorTextFocus && suggestWidgetMultipleSuggestions && suggestWidgetVisible";
+                                        "command" = "selectNextSuggestion";
+                                    }
+                                    {
+                                        "key"     = "ctrl+j";
+                                        "when"    = "inQuickOpen";
+                                        "command" = "workbench.action.quickOpenNavigateNext";
+                                    }
+                                    {
+                                        "key"     = "ctrl+k";
+                                        "when"    = "terminalFocus";
+                                        "command" = "workbench.action.terminal.toggleTerminal";
+                                    }
+                                    {
+                                        "key"     = "ctrl+k";
+                                        "when"    = "selectPrevSuggestion";
+                                        "command" = "editorTextFocus && suggestWidgetMultipleSuggestions && suggestWidgetVisible";
+                                    }
+                                    {
+                                        "key"     = "ctrl+k";
+                                        "when"    = "inQuickOpen";
+                                        "command" = "workbench.action.quickOpenNavigatePrevious";
+                                    }
+                                    {
+                                        "key"     = "ctrl+h";
+                                        "when"    = "editorTextFocus";
+                                        "command" = "workbench.action.focusSideBar";
+                                    }
+                                    {
+                                        "key"     = "ctrl+l";
+                                        "when"    = "sideBarFocus";
+                                        "command" = "workbench.action.focusActiveEditorGroup";
+                                    }
+                                ];
                             };
 
                             alacritty =
