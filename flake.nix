@@ -8,7 +8,7 @@
         nixpkgs-fork.url                    = "github:tricktron/nixpkgs/develop";
         darwin.url                          = "github:lnl7/nix-darwin/master";
         darwin.inputs.nixpkgs.follows       = "darwin-stable";
-        home-manager.url                    = "github:nix-community/home-manager";
+        home-manager.url                    = "github:nix-community/home-manager/release-21.11";
         home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
@@ -52,7 +52,7 @@
                     {
                         maxJobs               = 8;
                         buildCores            = 1;
-                        package               = pkgs.nixUnstable;
+                        package               = pkgs.nix_2_4;
                         useSandbox            = false;
                         trustedUsers          = [ "@admin" ];
                         binaryCachePublicKeys =
@@ -149,6 +149,7 @@
                                 gvproxy
                                 qemu
                                 (maven.override { jdk = jdk8; })
+                                rnix-lsp
                             ]
                             ++ packages-fork;
 
@@ -198,8 +199,12 @@
                             
                             direnv =
                             {
-                                enable            = true;
-                                nix-direnv.enable = true;
+                                enable     = true;
+                                nix-direnv =
+                                {
+                                  enable       = true;
+                                  enableFlakes = true;
+                                };
                             };
 
                             gh     =
@@ -270,10 +275,15 @@
                                     "editor.fontLigatures"                       = true;
                                     "editor.rulers"                              = [80 100];
                                     "editor.scrollBeyondLastLine"                = false;
-                                    "terminal.integrated.fontFamily"             = "Jetbrains Mono";
                                     "editor.fontSize"                            = 14;
+                                    "editor.tabSize"                             = 4;
+                                    "editor.formatOnSave"                        = false;
+                                    "editor.detectIndentation"                   = false;
+                                    "editor.insertSpaces"                        = true;
+                                    "terminal.integrated.fontFamily"             = "Jetbrains Mono";
                                     "workbench.colorTheme"                       = "Dracula Pro (Van Helsing)";
                                     "files.autoSave"                             = "afterDelay";
+                                    "nix.enableLanguageServer"                   = true;
                                     "vscode-neovim.neovimExecutablePaths.darwin" = 
                                         "${config.home.profileDirectory}/bin/nvim";
                                 };
