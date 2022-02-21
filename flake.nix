@@ -75,6 +75,7 @@
                             keep-outputs          = true
                             keep-derivations      = true
                         '';
+                        
                         nixPath      =
                         [
                             "/nix/var/nix/profiles/per-user/root/channels"
@@ -90,16 +91,10 @@
                         trackpad.Clicking = true;
                     };
 
+                    programs.zsh.enable = true;
+
                     environment.etc              =
                     {
-                        "profile".text  = 
-                        ''
-                            # /etc/profile: DO NOT EDIT -- this file has been generated automatically.
-                            . ${config.system.build.setEnvironment}
-                            ${config.system.build.setAliases.text}
-                            ${config.environment.interactiveShellInit}
-                        '';
-
                         "containers/containers.conf.d/99-gvproxy-path.conf".text = 
                         ''
                             [engine]
@@ -149,7 +144,6 @@
                         {
                             packages = with pkgs;
                             [
-                                oksh
                                 gnupg
                                 xz
                                 gvproxy
@@ -157,20 +151,6 @@
                                 (maven.override { jdk = jdk8; })
                             ]
                             ++ packages-fork;
-
-                            file.".profile".source                  = pkgs.writeText "profile"
-                            ''
-                                . "/etc/profile"
-                                . "${config.home.profileDirectory}/etc/profile.d/hm-session-vars.sh"
-                            '';
-                            file.".kshrc".source                    = pkgs.writeText "kshrc"
-                            ''
-                                export PS1="in \\e[0;34m\\W\\e[m \\e[0;33m➜\\e[m "
-                                export CLICOLOR=1
-                                # sets emacs edit mode to navigate history with arrow keys
-                                set -o emacs
-                                alias drsf="darwin-rebuild switch --flake"
-                            '';
 
                             file."Applications/home-manager".source =
                                 let apps = pkgs.buildEnv
@@ -182,20 +162,13 @@
                             in
                             lib.mkIf pkgs.stdenv.targetPlatform.isDarwin "${apps}/Applications";
 
-                            sessionPath =
-                            [
-                                "/run/current-system/sw/bin"
-                                "${config.home.profileDirectory}/bin"
-                                "/usr/local/bin"
-                                "/usr/bin"
-                                "/bin"
-                                "/usr/sbin"
-                                "/sbin"
-                            ];
+                            shellAliases =
+                            {
+                                drsf = "darwin-rebuild switch --flake";
+                            };
 
                             sessionVariables =
                             {
-                                ENV    = "$HOME/.kshrc";
                                 EDITOR = "nvim";
                             };
                         };
@@ -210,10 +183,38 @@
                                     set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
                                 '';
                             };
+
+                            zsh    =
+                            {
+                                enable                   = true;
+                                enableAutosuggestions    = true;
+                                enableSyntaxHighlighting = true;
+                            };
+
+                            starship =
+                            {
+                                enable = true;
+                            };
+                            
                             direnv =
                             {
                                 enable            = true;
                                 nix-direnv.enable = true;
+                            };
+
+                            gh     =
+                            {
+                                enable   = true;
+                                settings =
+                                {
+                                    git_protocol = "ssh";
+                                    prompt       = "enabled";
+                                    aliases      =
+                                    {
+                                        co = "pr checkout";
+                                        pv = "pr view";
+                                    };
+                                };
                             };
 
                             git    =
@@ -268,6 +269,7 @@
                                     "editor.fontFamily"                          = "Jetbrains Mono, monospace";
                                     "editor.fontLigatures"                       = true;
                                     "editor.rulers"                              = [80 100];
+                                    "editor.scrollBeyondLastLine"                = false;
                                     "terminal.integrated.fontFamily"             = "Jetbrains Mono";
                                     "editor.fontSize"                            = 14;
                                     "workbench.colorTheme"                       = "Dracula Pro (Van Helsing)";
@@ -300,8 +302,8 @@
                                     }
                                     {
                                         "key"     = "ctrl+k";
-                                        "when"    = "selectPrevSuggestion";
-                                        "command" = "editorTextFocus && suggestWidgetMultipleSuggestions && suggestWidgetVisible";
+                                        "when"    = "editorTextFocus && suggestWidgetMultipleSuggestions && suggestWidgetVisible";
+                                        "command" = "selectPrevSuggestion";
                                     }
                                     {
                                         "key"     = "ctrl+k";
@@ -310,13 +312,23 @@
                                     }
                                     {
                                         "key"     = "ctrl+h";
-                                        "when"    = "editorTextFocus";
+                                        "when"    = "editorTextFocus && activeEditorGroupIndex == 1";
                                         "command" = "workbench.action.focusSideBar";
+                                    }
+                                    {
+                                        "key"     = "ctrl+h";
+                                        "when"    = "editorTextFocus && activeEditorGroupIndex != 1";
+                                        "command" = "workbench.action.focusPreviousGroup";
                                     }
                                     {
                                         "key"     = "ctrl+l";
                                         "when"    = "sideBarFocus";
-                                        "command" = "workbench.action.focusActiveEditorGroup";
+                                        "command" = "workbench.action.focusFirstEditorGroup";
+                                    }
+                                    {
+                                        "key"     = "ctrl+l";
+                                        "when"    = "editorTextFocus";
+                                        "command" = "workbench.action.focusNextGroup";
                                     }
                                 ];
                             };
@@ -372,7 +384,7 @@
 
                                     shell =
                                     {
-                                        program = "${pkgs.oksh}/bin/oksh";
+                                        program = "${pkgs.zsh}/bin/zsh";
                                         args    = [ "-l" ];
                                     };
 
