@@ -174,6 +174,14 @@
                             };
                         };
 
+                        targets.darwin.defaults = 
+                        {
+                            "com.microsoft.VSCode" =
+                            {
+                              "ApplePressAndHoldEnabled" = false;
+                            };
+                        };
+
                         programs =
                         {
                             neovim =
