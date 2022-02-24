@@ -137,6 +137,7 @@
                         libreoffice
                         teams
                         (pkgs-fork.podman.override { extraPackages = [ qemu ]; })
+                        pkgs-fork.podman-compose
                     ];
                     in
                     {
@@ -165,7 +166,9 @@
 
                             shellAliases =
                             {
-                                drsf = "darwin-rebuild switch --flake";
+                                drsf           = "darwin-rebuild switch --flake";
+                                docker         = "podman";
+                                docker-compose = "podman-compose";
                             };
 
                             sessionVariables =
