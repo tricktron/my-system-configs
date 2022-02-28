@@ -136,7 +136,8 @@
                     [
                         libreoffice
                         teams
-                        (pkgs-fork.podman.override { extraPackages = [ qemu ]; })
+                        pkgs-fork.qemu
+                        pkgs-fork.podman-unwrapped
                         pkgs-fork.podman-compose
                     ];
                     in
@@ -148,7 +149,6 @@
                                 gnupg
                                 xz
                                 gvproxy
-                                qemu
                                 (maven.override { jdk = jdk8; })
                                 rnix-lsp
                             ]
