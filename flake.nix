@@ -132,14 +132,22 @@
                         unstable,
                         ...
                     }:
-                    let packages-fork = with unstable;
-                    [
-                        libreoffice
-                        teams
-                        pkgs-fork.qemu
-                        pkgs-fork.podman-unwrapped
-                        pkgs-fork.podman-compose
-                    ];
+                    let
+                        packages-unstable = with unstable;
+                        [
+                            libreoffice
+                            teams
+                            colima
+                            docker-compose_2
+                            docker
+                            nixpkgs-review
+                        ];
+                        packages-fork = with pkgs-fork;
+                        [
+                            pkgs-fork.qemu
+                            pkgs-fork.podman
+                            pkgs-fork.podman-compose
+                        ];
                     in
                     {
                         home =
@@ -151,8 +159,10 @@
                                 gvproxy
                                 (maven.override { jdk = jdk8; })
                                 rnix-lsp
+                                ((gradleGen.override { java = openjdk11; }).gradle_latest)
                             ]
-                            ++ packages-fork;
+                            ++ packages-fork
+                            ++ packages-unstable;
 
                             file."Applications/home-manager".source =
                                 let apps = pkgs.buildEnv
@@ -167,8 +177,6 @@
                             shellAliases =
                             {
                                 drsf           = "darwin-rebuild switch --flake";
-                                docker         = "podman";
-                                docker-compose = "podman-compose";
                             };
 
                             sessionVariables =
@@ -201,6 +209,12 @@
                                 enable                   = true;
                                 enableAutosuggestions    = true;
                                 enableSyntaxHighlighting = true;
+                                initExtra                =
+                                ''
+                                    if [ -f ~/.profile ]; then
+                                        . ~/.profile
+                                    fi
+                                '';
                             };
 
                             starship =
