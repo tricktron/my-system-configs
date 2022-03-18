@@ -144,9 +144,10 @@
                         ];
                         packages-fork = with pkgs-fork;
                         [
-                            pkgs-fork.qemu
-                            pkgs-fork.podman
-                            pkgs-fork.podman-compose
+                            qemu
+                            podman
+                            podman-compose
+                            postman
                         ];
                     in
                     {
