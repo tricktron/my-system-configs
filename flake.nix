@@ -82,6 +82,19 @@
                             "\$HOME/.nix-defexpr/channels"
                             { nixpkgs-fork = "\$HOME/github/my-forks/nixpkgs"; }
                         ];
+
+                        distributedBuilds = true;
+
+                        buildMachines =
+                        [
+                            {
+                                hostName = "linuxbuilder";
+                                maxJobs  = 1;
+                                sshKey   = "~/.ssh/insecure_rsa";
+                                sshUser  = "root";
+                                systems   = ["x86_64-linux" "aarch64-linux"];
+                            }
+                        ];
                     };
 
                     system.defaults               =
@@ -276,6 +289,16 @@
                                     IdentityFile ~/.ssh/gurten
                                     AddKeysToAgent yes
                                 '';
+                                matchBlocks    =
+                                {
+                                    "linuxbuilder" =
+                                    {
+                                        user         = "root";
+                                        hostname     = "127.0.0.1";
+                                        port         = 3022;
+                                        identityFile = "~/.ssh/insecure_rsa";
+                                    };
+                                };
                             };
 
                             java      =
