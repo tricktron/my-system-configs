@@ -154,6 +154,7 @@
                             docker-compose_2
                             docker
                             nixpkgs-review
+                            cachix
                         ];
                         packages-fork = with pkgs-fork;
                         [
@@ -182,7 +183,7 @@
                                 let apps = pkgs.buildEnv
                                 {
                                     name = "home-manager-apps";
-                                    paths = with pkgs; [ alacritty vscode ] ++ packages-fork;
+                                    paths = with pkgs; [ alacritty vscode ] ++ packages-fork ++ packages-unstable;
                                     pathsToLink = "/Applications";
                                 };
                             in
@@ -316,6 +317,14 @@
                                     jnoortheen.nix-ide
                                     asvetliakov.vscode-neovim
                                     editorconfig.editorconfig
+                                ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace
+                                [
+                                    {
+                                        name       = "vscode-xml";
+                                        publisher  = "redhat";
+                                        version    = "0.20.0";
+                                        sha256     = "sha256-GKBrf9s8n7Wv14RSfwyDma1dM0fGMvRkU/7v2DAcB9A=";
+                                    }
                                 ];
 
                                 userSettings =
@@ -329,12 +338,15 @@
                                     "editor.formatOnSave"                        = false;
                                     "editor.detectIndentation"                   = false;
                                     "editor.insertSpaces"                        = true;
+                                    "editor.minimap.enabled"                     = false;
                                     "terminal.integrated.fontFamily"             = "Jetbrains Mono";
                                     "workbench.colorTheme"                       = "Dracula Pro (Van Helsing)";
                                     "files.autoSave"                             = "afterDelay";
                                     "nix.enableLanguageServer"                   = true;
                                     "vscode-neovim.neovimExecutablePaths.darwin" = 
                                         "${config.home.profileDirectory}/bin/nvim";
+                                    "xml.server.binary.path"                     =
+                                        "\$HOME/github/integonch/lemminx/org.eclipse.lemminx/target/lemminx-osx-aarch_64-0.20.1-SNAPSHOT";
                                 };
                                 
                                 keybindings  =
