@@ -1,22 +1,7 @@
 { pkgs, config, ... }:
 {
     enable       = true;
-    extensions   = with pkgs.vscode-extensions;
-    [
-        redhat.java
-        jnoortheen.nix-ide
-        asvetliakov.vscode-neovim
-        editorconfig.editorconfig
-    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace
-    [
-        {
-              name       = "vscode-xml";
-              publisher  = "redhat";
-              version    = "0.20.0";
-              sha256     = "sha256-GKBrf9s8n7Wv14RSfwyDma1dM0fGMvRkU/7v2DAcB9A=";
-        }
-    ];
-
+    extensions   = (import ./vscode-extensions.nix { inherit pkgs; }).extensions;
     userSettings =
     {
         "editor.fontFamily"                          = "Jetbrains Mono, monospace";
