@@ -21,6 +21,10 @@
         "vscode-neovim.neovimExecutablePaths.darwin" = "${config.home.profileDirectory}/bin/nvim";
         "xml.server.binary.path"                     =
             "\$HOME/github/integonch/lemminx/org.eclipse.lemminx/target/lemminx-osx-aarch_64-0.20.1-SNAPSHOT";
+        "[nix]"                                      =
+        {
+            editor.tabSize = 4;
+        };
     };
     
     keybindings  =
