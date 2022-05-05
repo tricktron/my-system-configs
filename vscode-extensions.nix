@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, private-flake }:
 {
     extensions   = with pkgs.vscode-extensions;
     [
@@ -14,5 +14,5 @@
               version    = "0.20.0";
               sha256     = "sha256-GKBrf9s8n7Wv14RSfwyDma1dM0fGMvRkU/7v2DAcB9A=";
         }
-    ];
+    ] ++ [ private-flake.packages.${pkgs.system}.vscodeDraculaProTheme ];
 }

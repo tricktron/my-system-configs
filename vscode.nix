@@ -1,7 +1,7 @@
-{ pkgs, config, ... }:
+{ pkgs, config, private-flake, ... }:
 {
     enable       = true;
-    extensions   = (import ./vscode-extensions.nix { inherit pkgs; }).extensions;
+    extensions   = (import ./vscode-extensions.nix { inherit pkgs private-flake; }).extensions;
     userSettings =
     {
         "editor.fontFamily"                          = "Jetbrains Mono, monospace";

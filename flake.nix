@@ -10,6 +10,7 @@
         darwin.inputs.nixpkgs.follows       = "darwin-stable";
         home-manager.url                    = "github:nix-community/home-manager/release-21.11";
         home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
+        private-flake.url                   = "git+ssh://git@github.com/tricktron/private-flake?ref=main";
     };
 
     outputs =
@@ -19,6 +20,7 @@
         darwin,
         home-manager,
         nixpkgs-fork,
+        private-flake,
         ...
     }:
     {
@@ -210,7 +212,7 @@
 
                         programs =
                         {
-                            vscode = import ./vscode.nix { inherit pkgs config; };
+                            vscode = import ./vscode.nix { inherit pkgs config private-flake; };
                             neovim =
                             {
                                 enable      = true;
