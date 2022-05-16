@@ -37,20 +37,38 @@
                     ...
                 }:
                 {
-                    nixpkgs =
+                    nixpkgs  =
                     {
                         config = { allowUnfree = true; };
                     };
 
-                    fonts   =
+                    fonts    =
                     {
                         enableFontDir = true;
                         fonts = with pkgs; [ fira-code jetbrains-mono ];
                     };
 
-                    services.nix-daemon.enable = true;
+                    
+                    services =
+                    {
+                        nix-daemon.enable = true;
+                        spotifyd          =
+                        {
+                            enable   = true;
+                            settings =
+                            {
+                                username    = "116944127";
+                                device_name = "gurten";
+                                device_tpye = "computer";
+                                use_keyring = true;
+                                bitrate     = 320;
+                            };
 
-                    nix     =
+                            package  = (pkgs.spotifyd.override { withKeyring = true; });
+                        };
+                    };
+
+                    nix      =
                     {
                         maxJobs               = 8;
                         buildCores            = 1;
@@ -177,6 +195,7 @@
                                 (maven.override { jdk = jdk8; })
                                 rnix-lsp
                                 ((gradleGen.override { java = openjdk11; }).gradle_latest)
+                                spotify-tui
                             ]
                             ++ packages-fork
                             ++ packages-unstable;
@@ -208,7 +227,7 @@
                             {
                               "ApplePressAndHoldEnabled" = false;
                             };
-                        };
+                        }; 
 
                         programs =
                         {
