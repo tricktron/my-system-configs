@@ -46,7 +46,7 @@
 
                     fonts    =
                     {
-                        enableFontDir = true;
+                        fontDir.enable = true;
                         fonts = with pkgs; [ fira-code jetbrains-mono ];
                     };
 
@@ -199,6 +199,7 @@
                                 rnix-lsp
                                 ((gradleGen.override { java = openjdk11; }).gradle_latest)
                                 spotify-tui
+                                jq
                             ]
                             ++ packages-fork
                             ++ packages-unstable;
