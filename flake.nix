@@ -11,6 +11,7 @@
         home-manager.url                    = "github:nix-community/home-manager/release-21.11";
         home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
         private-flake.url                   = "git+ssh://git@github.com/tricktron/private-flake?ref=main";
+        nixt.url                            = "github:tricktron/nixt/my-master";
     };
 
     outputs =
@@ -21,6 +22,7 @@
         home-manager,
         nixpkgs-fork,
         private-flake,
+        nixt,
         ...
     }:
     {
@@ -175,6 +177,7 @@
                             docker
                             nixpkgs-review
                             cachix
+                            nixt.defaultPackage.${system}
                         ];
                         packages-fork = with pkgs-fork;
                         [

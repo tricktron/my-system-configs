@@ -39,6 +39,21 @@
     },
     "flake-utils": {
       "locked": {
+        "lastModified": 1652776076,
+        "narHash": "sha256-gzTw/v1vj4dOVbpBSJX4J0DwUR6LIyXo7/SuuTJp1kM=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "04c1b180862888302ddfb2e3ad9eaa63afc60cf8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_2": {
+      "locked": {
         "lastModified": 1649676176,
         "narHash": "sha256-OWKJratjt2RW151VUlJPRALb7OU2S5s+f0vLj4o1bHM=",
         "owner": "numtide",
@@ -121,6 +136,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1653326962,
+        "narHash": "sha256-W8feCYqKTsMre4nAEpv5Kx1PVFC+hao/LwqtB2Wci/8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "41cc1d5d9584103be4108c1815c350e07c807036",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1651743098,
         "narHash": "sha256-NuQNu6yHh54li0kZffM59FRC5bWCJusygL4Cy+3O0fY=",
         "owner": "nixos",
@@ -135,10 +166,30 @@
         "type": "github"
       }
     },
-    "private-flake": {
+    "nixt": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1653426054,
+        "narHash": "sha256-uJ2b2fROEo+H0llhl3R3u9m5SSus/vx1EKp7WWPbmis=",
+        "owner": "tricktron",
+        "repo": "nixt",
+        "rev": "edbedd8dae97cb26238292652a44351d77da2bb5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tricktron",
+        "ref": "my-master",
+        "repo": "nixt",
+        "type": "github"
+      }
+    },
+    "private-flake": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": "nixpkgs_3"
       },
       "locked": {
         "lastModified": 1651754534,
@@ -163,6 +214,7 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-fork": "nixpkgs-fork",
         "nixpkgs-stable": "nixpkgs-stable",
+        "nixt": "nixt",
         "private-flake": "private-flake"
       }
     }
