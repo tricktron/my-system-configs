@@ -3,12 +3,12 @@
 
     inputs =
     {
-        darwin-stable.url                   = "github:nixos/nixpkgs/nixpkgs-21.11-darwin";
-        nixpkgs-stable.url                  = "github:nixos/nixpkgs/release-21.11";
+        darwin-stable.url                   = "github:nixos/nixpkgs/nixpkgs-22.05-darwin";
+        nixpkgs-stable.url                  = "github:nixos/nixpkgs/release-22.05";
         nixpkgs-fork.url                    = "github:tricktron/nixpkgs/develop";
         darwin.url                          = "github:lnl7/nix-darwin/master";
         darwin.inputs.nixpkgs.follows       = "darwin-stable";
-        home-manager.url                    = "github:nix-community/home-manager/release-21.11";
+        home-manager.url                    = "github:nix-community/home-manager/release-22.05";
         home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
         private-flake.url                   = "git+ssh://git@github.com/tricktron/private-flake?ref=main";
         nixt.url                            = "github:tricktron/nixt/my-master";
@@ -74,7 +74,7 @@
                     {
                         maxJobs               = 8;
                         buildCores            = 1;
-                        package               = pkgs.nix_2_4;
+                        package               = pkgs.nix;
                         useSandbox            = false;
                         trustedUsers          = [ "@admin" ];
                         binaryCachePublicKeys =
@@ -147,11 +147,6 @@
                     home-manager.useUserPackages = true;
                     home-manager.extraSpecialArgs =
                     {
-                        pkgs-fork = import nixpkgs-fork
-                        {
-                            inherit (config.nixpkgs) config;
-                            inherit system;
-                        };
                         unstable  = import nixpkgs
                         {
                             inherit (config.nixpkgs) config;
@@ -170,20 +165,15 @@
                     let
                         packages-unstable = with unstable;
                         [
-                            libreoffice
+                            libreoffice-bin
                             teams
-                            colima
-                            docker-compose_2
+                            docker-compose
                             docker
+                            docker-buildx
                             nixpkgs-review
                             cachix
                             nixt.defaultPackage.${system}
-                        ];
-                        packages-fork = with pkgs-fork;
-                        [
                             qemu
-                            podman
-                            podman-compose
                             postman
                         ];
                     in
@@ -197,18 +187,18 @@
                                 gvproxy
                                 (maven.override { jdk = jdk8; })
                                 rnix-lsp
-                                ((gradleGen.override { java = openjdk11; }).gradle_latest)
+                                gradle_7
                                 spotify-tui
                                 jq
+                                colima
                             ]
-                            ++ packages-fork
                             ++ packages-unstable;
 
                             file."Applications/home-manager".source =
                                 let apps = pkgs.buildEnv
                                 {
                                     name = "home-manager-apps";
-                                    paths = with pkgs; [ alacritty vscode ] ++ packages-fork ++ packages-unstable;
+                                    paths = with pkgs; [ alacritty vscode ] ++ packages-unstable;
                                     pathsToLink = "/Applications";
                                 };
                             in
@@ -269,7 +259,6 @@
                                 nix-direnv =
                                 {
                                   enable       = true;
-                                  enableFlakes = true;
                                 };
                             };
 
