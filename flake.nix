@@ -152,6 +152,11 @@
                             inherit (config.nixpkgs) config;
                             inherit system;
                         };
+                        pkgs-fork = import nixpkgs-fork
+                        {
+                            inherit (config.nixpkgs) config;
+                            inherit system;
+                        };
                     };
                     home-manager.users.tricktron =
                     { 
@@ -176,6 +181,11 @@
                             qemu
                             postman
                         ];
+
+                        packages-fork = with pkgs-fork;
+                        [
+                            crc
+                        ];   
                     in
                     {
                         home =
@@ -187,12 +197,17 @@
                                 gvproxy
                                 (maven.override { jdk = jdk8; })
                                 rnix-lsp
-                                gradle_7
+                                (gradle_7.override
+                                {
+                                   java = jdk11;
+                                })
                                 spotify-tui
                                 jq
                                 colima
+                                
                             ]
-                            ++ packages-unstable;
+                            ++ packages-unstable
+                            ++ packages-fork;
 
                             file."Applications/home-manager".source =
                                 let apps = pkgs.buildEnv

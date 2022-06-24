@@ -104,11 +104,11 @@
     },
     "nixpkgs-fork": {
       "locked": {
-        "lastModified": 1647600821,
-        "narHash": "sha256-FSL7HMGDzRfT+o/JrSbI9ciSQMxGIzYIzs1yEEOT/2o=",
+        "lastModified": 1656084805,
+        "narHash": "sha256-YCiHnr9wf6We9NX7iGnLrz0NMzJtD/lLABk6I2gm6Jc=",
         "owner": "tricktron",
         "repo": "nixpkgs",
-        "rev": "ac22bb053051957d3e40d4d6e0d1817a8c65d69e",
+        "rev": "ef55db0cfe5e88bcf4f5c66c0a320ebcb9f75594",
         "type": "github"
       },
       "original": {
