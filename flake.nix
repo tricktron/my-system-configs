@@ -178,13 +178,11 @@
                             nixpkgs-review
                             cachix
                             nixt.defaultPackage.${system}
-                            qemu
                             postman
                         ];
 
                         packages-fork = with pkgs-fork;
                         [
-                            crc
                         ];   
                     in
                     {
@@ -193,8 +191,6 @@
                             packages = with pkgs;
                             [
                                 gnupg
-                                xz
-                                gvproxy
                                 (maven.override { jdk = jdk8; })
                                 rnix-lsp
                                 (gradle_7.override
