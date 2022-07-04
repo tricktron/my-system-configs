@@ -56,7 +56,7 @@
                         nix-daemon.enable = true;
                         spotifyd          =
                         {
-                            enable   = true;
+                            enable   = false;
                             settings =
                             {
                                 username    = "116944127";
@@ -199,6 +199,8 @@
                                 })
                                 spotify-tui
                                 jq
+                                openshift
+                                kubernetes-helm-wrapped
                                 colima
                                 
                             ]
