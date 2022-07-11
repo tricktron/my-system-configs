@@ -179,6 +179,7 @@
                             cachix
                             nixt.defaultPackage.${system}
                             postman
+                            colima 
                         ];
 
                         packages-fork = with pkgs-fork;
@@ -201,8 +202,6 @@
                                 jq
                                 openshift
                                 kubernetes-helm-wrapped
-                                colima
-                                
                             ]
                             ++ packages-unstable
                             ++ packages-fork;
