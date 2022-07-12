@@ -219,6 +219,7 @@
                             shellAliases =
                             {
                                 drsf           = "darwin-rebuild switch --flake";
+                                k              = "kubectl";
                             };
 
                             sessionVariables =
