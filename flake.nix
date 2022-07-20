@@ -128,14 +128,6 @@
 
                     programs.zsh.enable = true;
 
-                    environment.etc              =
-                    {
-                        "containers/containers.conf.d/99-gvproxy-path.conf".text = 
-                        ''
-                            [engine]
-                            helper_binaries_dir = ["/etc/profiles/per-user/tricktron/bin"]
-                        '';
-                    };
 
                     users.nix.configureBuildUsers = true;
                     users.users.tricktron         =
@@ -202,19 +194,24 @@
                                 jq
                                 openshift
                                 kubernetes-helm-wrapped
+                                python310Packages.pygments
+                                texlive.combined.scheme-full
                             ]
                             ++ packages-unstable
                             ++ packages-fork;
 
-                            file."Applications/home-manager".source =
+                            file = 
+                            {
+                                "Applications/home-manager".source =
                                 let apps = pkgs.buildEnv
                                 {
                                     name = "home-manager-apps";
                                     paths = with pkgs; [ alacritty vscode ] ++ packages-unstable;
                                     pathsToLink = "/Applications";
                                 };
-                            in
-                            lib.mkIf pkgs.stdenv.targetPlatform.isDarwin "${apps}/Applications";
+                                in
+                                lib.mkIf pkgs.stdenv.targetPlatform.isDarwin "${apps}/Applications";
+                            };
 
                             shellAliases =
                             {
@@ -258,6 +255,21 @@
                                     if [ -f ~/.profile ]; then
                                         . ~/.profile
                                     fi
+                                '';
+                                envExtra                 =
+                                ''
+                                    getCertChain()
+                                    # from estani https://unix.stackexchange.com/questions/368123/how-to-extract-the-root-ca-and-subordinate-ca-from-a-certificate-chain-in-linux
+                                    {
+                                        openssl s_client -showcerts -verify 5 -connect $1:443 < /dev/null | \
+                                        awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out="cert"a".pem"; print >out}'
+                                        for cert in *.pem; do 
+                                            newname=$(openssl x509 -noout -subject -in $cert |  \
+                                            sed -nE 's/.*CN ?= ?(.*)/\1/; s/[ ,.*]/_/g; s/__/_/g; s/_-_/-/; s/^_//g;p' | \
+                                            tr '[:upper:]' '[:lower:]').pem
+                                            echo "$newname"; mv "$cert" "$newname" 
+                                        done
+                                    }
                                 '';
                             };
 
