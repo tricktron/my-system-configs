@@ -25,6 +25,7 @@
         {
             editor.tabSize = 4;
         };
+        "update.mode"                                = "none";
     };
     
     keybindings  =
